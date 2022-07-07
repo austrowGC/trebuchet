@@ -1,0 +1,32 @@
+name: Pull request to master approved
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.review.state == 'approved' &&
+      startsWith(github.event.pull_request.head.ref, 'release/') &&
+      github.event.pull_request.base.ref == 'main'
+    steps:
+      - name: Merge pull request
+        run: |
+          gh pr merge ${{ github.event.pull_request.number }} \
+          --merge \
+          --subject "merge ${HEAD} into ${BASE}"
+        env:
+          HEAD: ${{ github.event.pull_request.head.ref }}
+          BASE: ${{ github.event.pull_request.base.ref }}
+      - name: Parse version number
+        id: version
+        run: echo "::set-output name=version::${REF:8}"
+        env:
+          REF: ${{ github.event.pull_request.base.ref }}
+      - name: Create github release
+        run: |
+          gh release create "v${{ steps.version.outputs.version }}" \
+          --generate-notes \
+          --target main
