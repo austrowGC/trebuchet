@@ -6,4 +6,8 @@ jobs:
   echo:
     runs-on: ubuntu-latest
     steps:
-      - run: echo ${{ github.event }}
+      - run: |
+          echo "published_at ${{ github.event.release.published_at }}"
+          echo "draft ${{ github.event.release.draft }}"
+          echo "prerelease ${{ github.event.release.prerelease }}"
+          echo "name ${{ github.event.release.name }}"
