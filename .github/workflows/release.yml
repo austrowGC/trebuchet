@@ -1,4 +1,7 @@
-on: [release]
+name: "[Pre]Release created"
+on:
+  release:
+    types: ['released', 'prereleased']
 jobs:
   echo:
     runs-on: ubuntu-latest
