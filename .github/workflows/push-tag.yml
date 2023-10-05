@@ -5,8 +5,12 @@ on:
       - "*"
 jobs:
   describe:
-    runs-on:  ubuntu@latest
+    runs-on:  ubuntu-latest
     steps:
-      - name: jq event object
+      - name: jq github object data
         run: |
-          jq '.' <<< "${{ github.event }}"
+          echo "github.event --"; jq '.' <<< "${{github.event}}"
+          echo "github.ref --"; jq '.' <<< "${{github.ref}}"
+          echo "github.ref_name --"; jq '.' <<< "${{github.ref_name}}"
+          echo "github.sha --"; jq '.' <<< "${{github.sha}}"
+
