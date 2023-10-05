@@ -1,0 +1,11 @@
+name: "describe tag event"
+on:
+  push:
+    tags:
+      - "*"
+jobs:
+  describe:
+    runs-on:  ubuntu@latest
+    steps:
+      - run: |
+          < "${{ github.event }}" jq .
