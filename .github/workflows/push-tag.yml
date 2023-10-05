@@ -7,5 +7,6 @@ jobs:
   describe:
     runs-on:  ubuntu@latest
     steps:
-      - run: |
-          < "${{ github.event }}" jq .
+      - name: jq event object
+        run: |
+          jq '.' <<< "${{ github.event }}"
