@@ -1,0 +1,25 @@
+name: Ref info
+on:
+  - pull_request
+  - push
+  - workflow_dispatch
+
+env:
+  trigger_ref: ${{github.ref||github.ref_name}}
+  base_ref: ${{github.base_ref||github.ref}}
+  head_ref: ${{github.head_ref||github.ref}}
+
+jobs:
+  refs:
+    runs-on: ubuntu-latest
+    outputs:
+      trigger: ${{steps.trigger.outputs.ref}}
+      base: ${{steps.base.outputs.ref}}
+      head: ${{steps.head.outputs.ref}}
+    steps:
+      - id: trigger
+        run: echo "ref=${{env.trigger_ref}}" >> "$GITHUB_OUTPUT"
+      - id: base
+        run: echo "ref=${{env.base_ref}}" >> "$GITHUB_OUTPUT"
+      - id: head
+        run: echo "ref=${{env.head_ref}}" >> "$GITHUB_OUTPUT"
