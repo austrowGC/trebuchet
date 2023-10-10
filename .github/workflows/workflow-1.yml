@@ -1,0 +1,14 @@
+name: placeholder
+on:
+  - pull_request
+  - push
+
+env:
+  resolved_ref: ${{github.ref||github.ref_name}}
+
+jobs:
+  describe-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: show resolved ref
+        run: echo ${{env.resolved_ref}}
