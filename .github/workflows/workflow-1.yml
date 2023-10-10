@@ -2,6 +2,7 @@ name: placeholder
 on:
   - pull_request
   - push
+  - workflow_dispatch
 
 env:
   resolved_ref: ${{github.ref||github.ref_name}}
