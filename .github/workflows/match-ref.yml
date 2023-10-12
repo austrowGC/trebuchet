@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: "match ref to configured pattern, outputting pattern within"
         id: name
-        run: echo "value=$(grep -ioE "$pattern" <<< "$target")" >> $GITHUB_OUTPUT
+        run: echo "value=$(grep -ioE $pattern <<< $target)" >> $GITHUB_OUTPUT
         env:
           pattern: ${{vars.REF_PATTERN}}
           target: ${{github.head_ref||github.ref}}
