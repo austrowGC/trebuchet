@@ -4,7 +4,7 @@ on:
 
 jobs:
   environment:
-    runs-on: linux
+    runs-on: ubuntu-latest
     outputs:
       name: ${{steps.name.outputs.value}}
     steps:
@@ -16,7 +16,7 @@ jobs:
           target: ${{github.head_ref||github.ref}}
 
   validate:
-    runs-on: linux
+    runs-on: ubuntu-latest
     needs: environment
     environment:
       name: ${{needs.environment.outputs.name}}
