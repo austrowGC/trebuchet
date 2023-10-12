@@ -1,0 +1,25 @@
+name: match head ref to configured list
+on:
+  - workflow_dispatch
+
+jobs:
+  environment:
+    runs-on: linux
+    outputs:
+      name: ${{steps.name.outputs.value}}
+    steps:
+      - name: "match ref to configured pattern, outputting pattern within"
+        id: name
+        run: echo "value=$(grep -ioE "$pattern" <<< "$target")" >> $GITHUB_OUTPUT
+        env:
+          pattern: ${{vars.REF_PATTERN}}
+          target: ${{github.head_ref||github.ref}}
+
+  validate:
+    runs-on: linux
+    needs: environment
+    environment:
+      name: ${{needs.environment.outputs.name}}
+    steps:
+      - name: summary
+        run: echo "matched environment ${{vars.ENV_NAME}}" >> $GITHUB_STEP_SUMMARY
