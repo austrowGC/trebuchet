@@ -4,7 +4,7 @@ on:
 
 jobs:
   environment:
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNERS }}
     outputs:
       name: ${{steps.name.outputs.value}}
     steps:
