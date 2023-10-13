@@ -16,9 +16,13 @@ jobs:
         run: echo "value=$(grep -ioE $pattern <<< $target)" >> $GITHUB_OUTPUT
 
       - if: ${{ '' == steps.name.outputs.value || failure() }}
-        name: fail empty pattern match
         run: |
-          echo "pattern match failed" >> $GITHUB_STEP_SUMMARY
+          echo "# Pattern match failed" >> $GITHUB_STEP_SUMMARY
+          echo "## Result" >> $GITHUB_STEP_SUMMARY
+          echo "* \"${{ steps.name.outputs.value }}\"" >> $GITHUB_STEP_SUMMARY
+          echo "## Input" >> $GITHUB_STEP_SUMMARY
+          echo "* pattern\t\"$pattern\"" >> $GITHUB_STEP_SUMMARY
+          echo "* target\t\"$target\"" >> $GITHUB_STEP_SUMMARY
           exit 1
 
   validate:
