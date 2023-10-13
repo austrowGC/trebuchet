@@ -7,13 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       name: ${{steps.name.outputs.value}}
+    env:
+      pattern: ${{vars.REF_PATTERN}}
+      target: ${{github.head_ref||github.ref}}
     steps:
       - name: "match ref to configured pattern, outputting pattern within"
         id: name
         run: echo "value=$(grep -ioE $pattern <<< $target)" >> $GITHUB_OUTPUT
-        env:
-          pattern: ${{vars.REF_PATTERN}}
-          target: ${{github.head_ref||github.ref}}
 
       - if: ${{ '' == steps.name.outputs.value || failure() }}
         name: fail empty pattern match
