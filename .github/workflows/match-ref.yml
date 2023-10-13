@@ -9,11 +9,11 @@ jobs:
       name: ${{steps.name.outputs.value}}
     env:
       pattern: ${{vars.REF_PATTERN}}
-      target: ${{github.head_ref||github.ref}}
+      ref: ${{github.head_ref||github.ref}}
     steps:
       - name: "match ref to configured pattern, outputting pattern within"
         id: name
-        run: echo "value=$(grep -ioE $pattern <<< $target)" >> $GITHUB_OUTPUT
+        run: echo "value=$(egrep -io $pattern <<< $ref)" >> $GITHUB_OUTPUT
 
       - if: ${{ '' == steps.name.outputs.value || failure() }}
         run: |
@@ -21,8 +21,8 @@ jobs:
           echo "## Result" >> $GITHUB_STEP_SUMMARY
           echo "* \"${{ steps.name.outputs.value }}\"" >> $GITHUB_STEP_SUMMARY
           echo "## Input" >> $GITHUB_STEP_SUMMARY
-          echo "* pattern\t\"$pattern\"" >> $GITHUB_STEP_SUMMARY
-          echo "* target\t\"$target\"" >> $GITHUB_STEP_SUMMARY
+          echo "* pattern: \"$pattern\"" >> $GITHUB_STEP_SUMMARY
+          echo "* ref:     \"$ref\"" >> $GITHUB_STEP_SUMMARY
           exit 1
 
   validate:
