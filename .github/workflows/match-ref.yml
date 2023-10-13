@@ -15,9 +15,16 @@ jobs:
           pattern: ${{vars.REF_PATTERN}}
           target: ${{github.head_ref||github.ref}}
 
+      - if: ${{ '' == steps.name.outputs.value || failure() }}
+        name: fail empty pattern match
+        run: |
+          echo "pattern match failed" >> $GITHUB_STEP_SUMMARY
+          exit 1
+
   validate:
     runs-on: ubuntu-latest
     needs: environment
+    if: ${{ success() }}
     environment:
       name: ${{needs.environment.outputs.name}}
     steps:
