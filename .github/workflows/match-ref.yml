@@ -2,23 +2,37 @@ name: match head ref to configured list
 on:
   - workflow_dispatch
 
+env:
+  ref: ${{ github.head_ref||github.ref }}
+
 jobs:
   environment:
     runs-on: ${{ vars.RUNNERS }}
     outputs:
-      name: ${{steps.name.outputs.value}}
+      match: ${{ steps.match.outputs.value }}
+      name: ${{ steps.lookup.outputs.value }}
     steps:
-      - name: "match ref to configured pattern, outputting pattern within"
-        id: name
-        run: echo "value=$(grep -ioE $pattern <<< $target)" >> $GITHUB_OUTPUT
+      - id: match
+        run: echo "value=$(egrep -io $pattern <<< $ref)" >> $GITHUB_OUTPUT
         env:
-          pattern: ${{vars.REF_PATTERN}}
-          target: ${{github.head_ref||github.ref}}
+          pattern: ${{ vars.REF_PATTERN }}
 
-      - if: ${{ '' == steps.name.outputs.value || failure() }}
-        name: fail empty pattern match
+      - if: ${{ '' == steps.match.outputs.value || failure() }}
+        name: "fail empty pattern match"
         run: |
           echo "pattern match failed" >> $GITHUB_STEP_SUMMARY
+          exit 1
+
+      - id: lookup
+        run: echo "value=$(jq -r --arg key $pattern '.[$key]' <<< $json)" >> $GITHUB_OUTPUT
+        env:
+          json: ${{ vars.JSON_PATTERN_ENV }}
+          pattern: ${{ steps.match.outputs.value }}
+        
+      - if: ${{ '' == steps.lookup.outputs.value || failure() }}
+        name: "fail lookup"
+        run: |
+          echo "lookup failed" >> $GITHUB_STEP_SUMMARY
           exit 1
 
   validate:
@@ -26,7 +40,7 @@ jobs:
     needs: environment
     if: ${{ success() }}
     environment:
-      name: ${{needs.environment.outputs.name}}
+      name: ${{ needs.environment.outputs.name }}
     steps:
       - name: summary
-        run: echo "matched environment ${{vars.ENV_NAME}}" >> $GITHUB_STEP_SUMMARY
+        run: echo "matched environment ${{ vars.ENV_NAME }}" >> $GITHUB_STEP_SUMMARY
